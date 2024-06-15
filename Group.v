@@ -1,18 +1,5 @@
 Require Import Coq.Classes.SetoidClass.
 
-Definition Associative {A: Set}
-  (R: A -> A -> Prop)
-  (op: A -> A -> A)
-  : Prop :=
-  forall (x y z : A),
-    R (op (op x y) z) (op x (op y z)).
-
-Definition Commutative {A: Set}
-  (R: A -> A -> Prop)
-  (op: A -> A -> A)
-  : Prop :=
-  forall (x y : A), R (op x y) (op y x).
-
 Class Group (A: Set) (op: A -> A -> A) : Type := {
   #[global]
   g_setoid :: Setoid A;
@@ -148,6 +135,13 @@ Lemma inv_op
 Proof.
   intros *.
   intros_refl id H.
-Admitted. (* TODO *)
-
+  rewrite <- (inverses_l (op x y)) in H at 1.
+  rewrite <- (inverses_l y) in H.
+  rewrite <- (ident_l y) in H at 4.
+  rewrite <- (inverses_l x) in H.
+  rewrite (assoc (inv x)) in H.
+  rewrite <- (assoc (inv y)) in H.
+  apply cancel_r in H.
+  exact H.
+Qed.
 
